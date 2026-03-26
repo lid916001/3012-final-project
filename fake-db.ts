@@ -166,6 +166,18 @@ function addComment(post_id, creator, description) {
   return comment;
 }
 
+function setVote(post_id, user_id, value) {
+  const existing = votes.find(v => v.post_id === post_id && v.user_id === user_id);
+  if (value === 0) {
+    const idx = votes.indexOf(existing);
+    if (idx !== -1) votes.splice(idx, 1);
+  } else if (existing) {
+    existing.value = value;
+  } else {
+    votes.push({ user_id, post_id, value });
+  }
+}
+
 export {
   debug,
   getUser,
@@ -177,5 +189,6 @@ export {
   deletePost,
   getSubs,
   addComment,
+  setVote,
   decoratePost,
 };

@@ -9,39 +9,39 @@
       href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.classless.min.css"
     />
     <link href="/css/style.css" rel="stylesheet" />
-    <title>Create Post</title>
+    <title>Edit Post</title>
   </head>
   <body>
     <main>
       <div class="authOptions">
-        <h1>Create Post</h1>
+        <h1>Edit Post</h1>
         <a role="button" href="/posts">Home</a>
       </div>
 
       <hr />
 
-      <form action="/posts/create" method="post">
+      <form action="/posts/edit/<%= post.id %>" method="post">
         <label>
           Title
-          <input type="text" name="title" required />
+          <input type="text" name="title" value="<%= post.title %>" required />
         </label>
         <label>
           Link
-          <input type="text" name="link" required />
+          <input type="text" name="link" value="<%= post.link %>" required />
         </label>
         <label>
           Description
-          <textarea name="description" required></textarea>
+          <textarea name="description" required><%= post.description %></textarea>
         </label>
         <label>
           Subgroup
           <select name="subgroup">
             <% subs.forEach(sub => { %>
-              <option value="<%= sub %>"><%= sub %></option>
+              <option value="<%= sub %>" <%= sub === post.subgroup ? 'selected' : '' %>><%= sub %></option>
             <% }) %>
           </select>
         </label>
-        <button type="submit">Submit</button>
+        <button type="submit">Save Changes</button>
       </form>
 
     </main>

@@ -9,17 +9,81 @@
       href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.classless.min.css"
     />
     <link href="/css/style.css" rel="stylesheet" />
-    <title>Post</title>
+    <title><%= post.title %></title>
   </head>
   <body>
     <main>
       <div class="authOptions">
-        <h1>View Post</h1>
-        <a role="button" href="/posts">Home</a>
+        <h1>Post</h1>
+        <% if (!user) { %>
+          <a role="button" href="/auth/login">Login</a>
+        <% } else { %>
+          <a role="button" href="/auth/logout">Logout</a>
+        <% } %>
       </div>
-      <div>
-        <p>Implement this page yourself. It is from individualPost.ejs</p>
+
+      <a href="/posts">← Home</a>
+
+      <hr />
+
+      <% const netVotes = post.votes.reduce((sum, v) => sum + v.value, 0); %>
+      <% const myVote = user ? post.votes.find(v => v.user_id === user.id) : null; %>
+
+      <div class="postCard">
+        <div class="voteBlock">
+          <% if (user) { %>
+            <form action="/posts/vote/<%= post.id %>" method="post" class="voteForm">
+              <button name="setvoteto" value="<%= myVote?.value === 1 ? 0 : 1 %>"
+                class="voteBtn <%= myVote?.value === 1 ? 'active-up' : '' %>">▲</button>
+              <span class="voteTotal"><%= netVotes %></span>
+              <button name="setvoteto" value="<%= myVote?.value === -1 ? 0 : -1 %>"
+                class="voteBtn <%= myVote?.value === -1 ? 'active-down' : '' %>">▼</button>
+            </form>
+          <% } else { %>
+            <span class="voteTotal"><%= netVotes %></span>
+          <% } %>
+        </div>
+
+        <div class="postInfo">
+          <h2><a href="<%= post.link %>" target="_blank"><%= post.title %></a></h2>
+          <p><%= post.description %></p>
+          <small>
+            posted by <strong><%= post.creator.uname %></strong>
+            in <a href="/subs/show/<%= post.subgroup %>"><%= post.subgroup %></a>
+          </small>
+        </div>
       </div>
+
+      <% if (user) { %>
+        <div>
+          <a href="/posts/edit/<%= post.id %>">Edit</a>
+          &nbsp;|&nbsp;
+          <a href="/posts/deleteconfirm/<%= post.id %>">Delete</a>
+        </div>
+      <% } %>
+
+      <hr />
+
+      <h3>Comments</h3>
+
+      <% post.comments.forEach(comment => { %>
+        <div class="comment">
+          <strong><%= comment.creator.uname %></strong>
+          <p><%= comment.description %></p>
+        </div>
+      <% }) %>
+
+      <% if (post.comments.length === 0) { %>
+        <p>No comments yet.</p>
+      <% } %>
+
+      <% if (user) { %>
+        <form action="/posts/comment-create/<%= post.id %>" method="post">
+          <textarea name="description" placeholder="Add a comment..." required></textarea>
+          <button type="submit">Submit</button>
+        </form>
+      <% } %>
+
     </main>
   </body>
 </html>

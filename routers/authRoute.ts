@@ -3,7 +3,8 @@ import passport from "../middleware/passport";
 const router = express.Router();
 
 router.get("/login", async (req, res) => {
-  res.render("login");
+  const devMode = process.env.MODE === "dev";
+  res.render("login", { devMode });
 });
 
 router.post(

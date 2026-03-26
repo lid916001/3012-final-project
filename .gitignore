@@ -1,3 +1,5 @@
 node_modules/
 **/*solution*
 .env
+logs/
+docs/

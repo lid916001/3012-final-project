@@ -1,6 +1,11 @@
 import express from "express";
 import session from "express-session";
 import passport from "./middleware/passport";
+import indexRoute from "./routers/indexRoute";
+import authRoute from "./routers/authRoute";
+import postsRoute from "./routers/postRouters";
+import subsRouters from "./routers/subsRouters";
+
 const PORT = process.env.PORT || 8000;
 
 const app = express();
@@ -20,11 +25,6 @@ app.use(
     },
   })
 );
-
-import indexRoute from "./routers/indexRoute";
-import authRoute from "./routers/authRoute";
-import postsRoute from "./routers/postRouters";
-import subsRouters from "./routers/subsRouters";
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

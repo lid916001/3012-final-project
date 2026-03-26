@@ -9,17 +9,51 @@
       href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.classless.min.css"
     />
     <link href="/css/style.css" rel="stylesheet" />
-    <title>Sub posts</title>
+    <title><%= subname %></title>
   </head>
   <body>
     <main>
       <div class="authOptions">
-        <h1>Sub Posts</h1>
-        <a role="button" href="/posts">Home</a>
+        <h1>r/<%= subname %></h1>
+        <% if (!user) { %>
+          <a role="button" href="/auth/login">Login</a>
+        <% } else { %>
+          <a role="button" href="/auth/logout">Logout</a>
+        <% } %>
       </div>
-      <div>
-        <p>Implement this page yourself. It is from sub.ejs</p>
+
+      <a href="/subs/list">← Subgroups</a>
+
+      <hr />
+
+      <% posts.forEach(post => {
+        const netVotes = post.votes.reduce((sum, v) => sum + v.value, 0);
+        const myVote = user ? post.votes.find(v => v.user_id === user.id) : null;
+      %>
+      <div class="postCard">
+        <div class="voteBlock">
+          <% if (user) { %>
+            <form action="/posts/vote/<%= post.id %>" method="post" class="voteForm">
+              <button name="setvoteto" value="<%= myVote?.value === 1 ? 0 : 1 %>"
+                class="voteBtn <%= myVote?.value === 1 ? 'active-up' : '' %>">▲</button>
+              <span class="voteTotal"><%= netVotes %></span>
+              <button name="setvoteto" value="<%= myVote?.value === -1 ? 0 : -1 %>"
+                class="voteBtn <%= myVote?.value === -1 ? 'active-down' : '' %>">▼</button>
+            </form>
+          <% } else { %>
+            <span class="voteTotal"><%= netVotes %></span>
+          <% } %>
+        </div>
+
+        <div class="postInfo">
+          <a href="/posts/show/<%= post.id %>"><%= post.title %></a>
+          <small>
+            posted by <strong><%= post.creator.uname %></strong>
+          </small>
+        </div>
       </div>
+      <% }) %>
+
     </main>
   </body>
 </html>

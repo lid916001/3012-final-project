@@ -16,33 +16,53 @@
       <div class="authOptions">
         <h1>Homepage</h1>
         <% if (!user) { %>
-        <a role="button" href="/auth/login">Login</a>
+          <a role="button" href="/auth/login">Login</a>
         <% } else { %>
-        <a role="button" href="/auth/logout">Logout</a>
+          <a role="button" href="/auth/logout">Logout</a>
         <% } %>
       </div>
+
       <h2>Welcome, <%= user?.uname || "Visitor" %></h2>
+
       <div>
-        <p>All Posts</p>
-        <% posts.forEach(post => { %>
-        <div class="individualPost">
-          <a href="/posts/show/<%=post.id%>"><%= post.title %></a>
-          <p><%= post.description %></p>
+        <a href="/subs/list">Browse Subgroups</a>
+        <% if (user) { %>
+          &nbsp;|&nbsp;
+          <a role="button" href="/posts/create">+ Create Post</a>
+        <% } %>
+      </div>
+
+      <hr />
+
+      <% posts.forEach(post => {
+        const netVotes = post.votes.reduce((sum, v) => sum + v.value, 0);
+        const myVote = user ? post.votes.find(v => v.user_id === user.id) : null;
+      %>
+      <div class="postCard">
+        <div class="voteBlock">
+          <% if (user) { %>
+            <form action="/posts/vote/<%= post.id %>" method="post" class="voteForm">
+              <button name="setvoteto" value="<%= myVote?.value === 1 ? 0 : 1 %>"
+                class="voteBtn <%= myVote?.value === 1 ? 'active-up' : '' %>">▲</button>
+              <span class="voteTotal"><%= netVotes %></span>
+              <button name="setvoteto" value="<%= myVote?.value === -1 ? 0 : -1 %>"
+                class="voteBtn <%= myVote?.value === -1 ? 'active-down' : '' %>">▼</button>
+            </form>
+          <% } else { %>
+            <span class="voteTotal"><%= netVotes %></span>
+          <% } %>
         </div>
-        <% }) %>
-      </div>
 
-      <div>
-        <a href="/subs/list">Subgroups</a>
+        <div class="postInfo">
+          <a href="/posts/show/<%= post.id %>"><%= post.title %></a>
+          <small>
+            posted by <strong><%= post.creator.uname %></strong>
+            in <a href="/subs/show/<%= post.subgroup %>"><%= post.subgroup %></a>
+          </small>
+        </div>
       </div>
+      <% }) %>
 
-      <div>
-        <a role="button" href="/posts/create">Create Post</a>
-      </div>
-      <p style="color: rgb(197, 172, 172)">
-        😦 Heads up...you probably want to hide the Create Post button above for
-        non-logged-in users!
-      </p>
     </main>
   </body>
 </html>
